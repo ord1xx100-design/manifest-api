@@ -62,13 +62,38 @@ export default async function handler(request) {
     });
     const user = await userResp.json();
 
-    const userJson = JSON.stringify({
-      id: user.id,
-      username: user.username,
-      global_name: user.global_name,
-      avatar: user.avatar,
-      email: user.email,
+    const userJson =   // === ПРОВЕРКА ПОДПИСКИ НА DISCORD-СЕРВЕР ===
+  const MY_GUILD_ID = 'СЮДА_ВСТАВЬ_ID_СЕРВЕРА'; // ← ЗАМЕНИ
+  const INVITE_URL = 'https://discord.gg/СЮДА_ИНВАЙТ'; // ← ЗАМЕНИ
+
+  const guildsResp = await fetch('https://discord.com/api/users/@me/guilds', {
+    headers: { Authorization: 'Bearer ' + token.access_token },
+  });
+  const guilds = await guildsResp.json();
+  const isMember = Array.isArray(guilds) && guilds.some(g => g.id === MY_GUILD_ID);
+
+  if (!isMember) {
+    const blockedHtml = `<!DOCTYPE html>
+<html>
+<head><title>Требуется подписка</title></head>
+<body style="background:#0a0b14;color:#fff;font-family:sans-serif;display:flex;align-items:center;justify-content:center;height:100vh;margin:0;">
+<div style="text-align:center;max-width:400px;padding:24px;">
+  <div style="font-size:64px;margin-bottom:16px;">🔒</div>
+  <h2 style="margin:0 0 12px;">Требуется подписка на Discord</h2>
+  <p style="color:#888;margin:0 0 24px;">Чтобы использовать ZINEX, вступите в наш Discord-сервер</p>
+  <a href="${INVITE_URL}" target="_blank" 
+     style="display:inline-block;background:linear-gradient(135deg,#7c3aed,#06b6d4);color:#fff;padding:14px 32px;border-radius:10px;text-decoration:none;font-weight:600;font-size:16px;">
+    Вступить в Discord
+  </a>
+</div>
+</body>
+</html>`;
+    return new Response(blockedHtml, {
+      headers: { 'Content-Type': 'text/html; charset=utf-8' },
     });
+  }
+      
+    
 
     const html = `<!DOCTYPE html>
 <html>
