@@ -141,7 +141,7 @@ export default async function handler(request) {
   if (type) target += '?file_type=' + type;
 
   const r = await fetch(target, {
-    headers: { 'X-Auth-Key': 'IGYNXdYKW9s8ilny' },
+    headers: { 'X-Auth-Key': 'h54O8OTUAc9iEShK' },
   });
 
   return new Response(r.body, {
