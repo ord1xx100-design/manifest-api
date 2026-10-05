@@ -1,9 +1,12 @@
 export const config = { runtime: 'edge' };
 
 const DISCORD_CLIENT_ID = '1556625761203523684';
-const DISCORD_CLIENT_SECRET = 'ZGWCzEjv-OquV2j6lzjRz2BQ5_9__Hig';
+const DISCORD_CLIENT_SECRET = '2c5b8f60c41cd7c4b8f2206b53e6f18d';
 const DISCORD_REDIRECT = 'https://manifest-api-dun.vercel.app/api/manifest?action=discord';
 const FRONTEND_URL = 'https://zinextools.base44.app';
+
+const MY_GUILD_ID = '1548789764092723282';
+const INVITE_URL = 'https://discord.gg/khpnE6zbn';
 
 export default async function handler(request) {
   const url = new URL(request.url);
@@ -31,7 +34,7 @@ export default async function handler(request) {
         client_id: DISCORD_CLIENT_ID,
         redirect_uri: DISCORD_REDIRECT,
         response_type: 'code',
-       scope: 'identify email guilds',
+        scope: 'identify email guilds',
       });
       return Response.redirect('https://discord.com/oauth2/authorize?' + params);
     }
@@ -62,18 +65,18 @@ export default async function handler(request) {
     });
     const user = await userResp.json();
 
-    const userJson =   // === ПРОВЕРКА ПОДПИСКИ НА DISCORD-СЕРВЕР ===
-  const MY_GUILD_ID = '1548789764092723282'; // ← ЗАМЕНИ
-  const INVITE_URL = 'https://discord.gg/khpnE6zbn'; // ← ЗАМЕНИ
+    // Шаг 4: проверка сервера
+    const guildsResp = await fetch('https://discord.com/api/users/@me/guilds', {
+      headers: { Authorization: 'Bearer ' + token.access_token },
+    });
+    const guilds = await guildsResp.json();
 
-  const guildsResp = await fetch('https://discord.com/api/users/@me/guilds', {
-    headers: { Authorization: 'Bearer ' + token.access_token },
-  });
-  const guilds = await guildsResp.json();
-  const isMember = Array.isArray(guilds) && guilds.some(g => g.id === MY_GUILD_ID);
+    const isMember = Array.isArray(guilds) && 
+      guilds.some(g => String(g.id) === String(MY_GUILD_ID));
 
-  if (!isMember) {
-    const blockedHtml = `<!DOCTYPE html>
+    // Если НЕ на сервере — показать блокировку
+    if (!isMember) {
+      const blockedHtml = `<!DOCTYPE html>
 <html>
 <head><title>Требуется подписка</title></head>
 <body style="background:#0a0b14;color:#fff;font-family:sans-serif;display:flex;align-items:center;justify-content:center;height:100vh;margin:0;">
@@ -88,12 +91,19 @@ export default async function handler(request) {
 </div>
 </body>
 </html>`;
-    return new Response(blockedHtml, {
-      headers: { 'Content-Type': 'text/html; charset=utf-8' },
+      return new Response(blockedHtml, {
+        headers: { 'Content-Type': 'text/html; charset=utf-8' },
+      });
+    }
+
+    // Шаг 5: успех — отдать данные на фронт
+    const userJson = JSON.stringify({
+      id: user.id,
+      username: user.username,
+      global_name: user.global_name,
+      avatar: user.avatar,
+      email: user.email,
     });
-  }
-      
-    
 
     const html = `<!DOCTYPE html>
 <html>
@@ -112,11 +122,11 @@ export default async function handler(request) {
 </html>`;
 
     return new Response(html, {
-       headers: { 'Content-Type': 'text/html; charset=utf-8' },
+      headers: { 'Content-Type': 'text/html; charset=utf-8' },
     });
   }
 
-  // === MANIFEST GENERATOR (существующая логика) ===
+  // === MANIFEST GENERATOR ===
   const appid = url.searchParams.get('appid');
   const type = url.searchParams.get('type') || '';
 
