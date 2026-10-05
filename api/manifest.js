@@ -1,7 +1,7 @@
 export const config = { runtime: 'edge' };
 
 const DISCORD_CLIENT_ID = '1556625761203523684';
-const DISCORD_CLIENT_SECRET = 'm2AX6m56axUfslIt3AsxdmY1dlaGWF';
+const DISCORD_CLIENT_SECRET = 'vjomgw5kV_IdNoVCNP-LkIjTbyjCbfNc';
 const DISCORD_REDIRECT = 'https://manifest-api-dun.vercel.app/api/manifest?action=discord';
 const FRONTEND_URL = 'https://zinextools.base44.app';
 
