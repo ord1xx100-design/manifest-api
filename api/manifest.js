@@ -63,7 +63,7 @@ export default async function handler(request) {
     const user = await userResp.json();
 
     const userJson =   // === ПРОВЕРКА ПОДПИСКИ НА DISCORD-СЕРВЕР ===
-  const MY_GUILD_ID = 'СЮДА_ВСТАВЬ_ID_СЕРВЕРА'; // ← ЗАМЕНИ
+  const MY_GUILD_ID = '1548789764092723282'; // ← ЗАМЕНИ
   const INVITE_URL = 'https://discord.gg/СЮДА_ИНВАЙТ'; // ← ЗАМЕНИ
 
   const guildsResp = await fetch('https://discord.com/api/users/@me/guilds', {
