@@ -31,7 +31,7 @@ export default async function handler(request) {
         client_id: DISCORD_CLIENT_ID,
         redirect_uri: DISCORD_REDIRECT,
         response_type: 'code',
-        scope: 'identify email',
+       scope: 'identify email guilds',
       });
       return Response.redirect('https://discord.com/oauth2/authorize?' + params);
     }
